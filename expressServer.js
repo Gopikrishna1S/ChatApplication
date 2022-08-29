@@ -1,5 +1,6 @@
 const express = require('express')
 const http = require('http')
+const path = require('path')
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
@@ -59,6 +60,9 @@ io.on('connection', socket => {
     })
 })
 
+app.get('/client.js', (req,res)=> {
+    res.sendFile((path.join(__dirname,'client.js')))
+})
 port = process.env.PORT || 2000
 
 chatServer.listen(port, () => {
