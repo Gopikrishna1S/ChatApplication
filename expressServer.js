@@ -8,13 +8,17 @@ app.use(express.static(__dirname+'/css'))
 chatServer = http.createServer(app)
 
 const connectionURI = 'mongodb+srv://infinit:test123456@chatappln.lcs16rw.mongodb.net/?retryWrites=true&w=majority'
-mongoose.connect(connectionURI, (e)=> {
-    if(e){
-        console.error(e)
-    } else {
-        console.log('Connected to Atlas')
-    }
-})
+
+const connection = async () => {
+    await mongoose.connect(connectionURI, (e)=> {
+        if(e){
+            console.error(e)
+        } else {
+            console.log('Connected to Atlas')
+        }
+    })
+}
+connection()
 
 const msgSchema = new Schema({
     userID: String,
