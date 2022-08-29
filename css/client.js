@@ -12,11 +12,10 @@ const addToChatBox = (msg, position) => {
     msgContainer.append(msgElement)
 }
 
-
 form.addEventListener ('submit', e => {
     e.preventDefault()
     const message = msgInput.value
-    socket.emit('send-msg', message)
+    socket.emit('send-msg',message)
     addToChatBox(`You: ${message}`, 'right')
     msgInput.value = ''
 })
@@ -29,17 +28,16 @@ const enterName = () => {
     return userName
 }
 
-userName = enterName()
+let userName = enterName()
 
 socket.emit('new-user-joined', userName) 
-
 
 socket.on('user-joined', name=>{
     addToChatBox(`${name} joined the chat`, "center")
 })
 
 socket.on('receive-msg', data => {
-    addToChatBox(`${data.name}: ${data.message}`, 'left')
+    addToChatBox(`${data.userID}: ${data.message}`, 'left')
 })
 
 socket.on('user-disconnected', data => {
