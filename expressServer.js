@@ -1,14 +1,12 @@
 const express = require('express')
 const http = require('http')
+const path = require('path')
 
 const app = express()
 app.use(express.static(__dirname+'/css'))
 
 chatServer = http.createServer(app)
 
-app.get('/js/client.js', (req,res) => {
-    res.sendFile('/Users/gopikrishna1.s/Desktop/Chat App/js/client.js')
-})
 
 const io = require('socket.io')(chatServer, { 
     cors: {
