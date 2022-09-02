@@ -2,33 +2,15 @@ const express = require('express')
 const http = require('http')
 const path = require('path')
 const mongoose = require('mongoose')
-const Schema = mongoose.Schema
+
+const msgModel = require('./db/dbSchema.js')
+const connection = require('./db/dbConnection.js')
 
 const app = express()
 app.use(express.static(__dirname+'/css'))
 chatServer = http.createServer(app)
 
-const connectionURI = 'mongodb+srv://infinit:test123456@chatappln.lcs16rw.mongodb.net/?retryWrites=true&w=majority'
-
-const connection = async () => {
-    await mongoose.connect(connectionURI, (e)=> {
-        if(e){
-            console.error(e)
-        } else {
-            console.log('Connected to Atlas')
-        }
-    })
-}
-connection()
-
-const msgSchema = new Schema({
-    userID: String,
-    chatName: String,
-    message: String,
-    created: {type: Date, default:Date.now}
-})
-
-const msgModel = mongoose.model('Message',msgSchema)
+connection()    // Connect to MongoDB local database
 
 const io = require('socket.io')(chatServer, { 
     cors: {
@@ -38,7 +20,13 @@ const io = require('socket.io')(chatServer, {
 
 const users = {};
 
+
 io.on('connection', socket => {
+
+    msgModel.find({}, (e, docs) => {
+        if(e) throw e
+        socket.emit('load-msg',docs)
+    })
 
     socket.on('new-user-joined', name => {
         users[socket.id] = name;
@@ -46,11 +34,9 @@ io.on('connection', socket => {
     })
 
     socket.on('send-msg', message => {
-        const newMsg = new msgModel({userID: socket.id, message: message})
-        
-        newMsg.save((err)=>{
+        msgModel.create( {userID: socket.id, message: message, userName: users[socket.id]}, (err)=>{
             if(err) throw err
-            socket.broadcast.emit( 'receive-msg', {userID: users[socket.id], message: message} )
+            socket.broadcast.emit( 'receive-msg', {userID: socket.id, message: message, userName: users[socket.id]} )
         })
     })
 

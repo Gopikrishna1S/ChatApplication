@@ -37,7 +37,19 @@ socket.on('user-joined', name=>{
 })
 
 socket.on('receive-msg', data => {
-    addToChatBox(`${data.userID}: ${data.message}`, 'left')
+    addToChatBox(`${data.userName}: ${data.message}`, 'left')
+})
+
+socket.on('load-msg', data => {
+    addToChatBox(`Old Messages`, 'center')
+    for(var i=0; i<data.length; i++){
+        if (i%2 != 0){
+            addToChatBox(`${data[i].userName}: ${data[i].message}`,'left')
+        } else {
+            addToChatBox(`${data[i].userName}: ${data[i].message}`,'right')
+        }
+    }
+    addToChatBox('New Messages', 'center') 
 })
 
 socket.on('user-disconnected', data => {
