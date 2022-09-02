@@ -5,6 +5,7 @@ const mongoose = require('mongoose')
 
 const msgModel = require('./db/dbSchema.js')
 const connection = require('./db/dbConnection.js')
+require('./nodeServer/index')
 
 const app = express()
 app.use(express.static(__dirname+'/css'))
