@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const connectionURI = 'mongodb://localhost:27017/messages'
+const connectionURI = 'mongodb://localhost:27017/chat'
 
 const connection = async () => {
     await mongoose.connect(connectionURI, (e)=> {
