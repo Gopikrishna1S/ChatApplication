@@ -1,16 +1,30 @@
 const express = require('express')
 const http = require('http')
 const path = require('path')
-const mongoose = require('mongoose')
 
 const msgModel = require('./db/dbSchema.js')
 const connection = require('./db/dbConnection.js')
 
 const app = express()
 app.use(express.static(__dirname+'/css'))
+
+port = process.env.PORT || 2000
 chatServer = http.createServer(app)
 
-connection()    // Connect to MongoDB local database
+const start = async () => {
+    try {
+        await connection("mongodb://localhost:27017/chat")
+        console.log('Connected to MongoDB')
+
+        chatServer.listen(port, () => {
+            console.log(`Server running on port ${port}`)
+        })
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+start() // Connect to MongoDB local database
 
 const io = require('socket.io')(chatServer, { 
     cors: {
@@ -19,7 +33,6 @@ const io = require('socket.io')(chatServer, {
 })
 
 const users = {};
-
 
 io.on('connection', socket => {
 
@@ -48,9 +61,4 @@ io.on('connection', socket => {
 
 app.get('/client.js', (req,res)=> {
     res.sendFile((path.join(__dirname,'client.js')))
-})
-port = process.env.PORT || 2000
-
-chatServer.listen(port, () => {
-    console.log(`Server running on port ${port}`)
 })
