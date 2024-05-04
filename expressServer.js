@@ -36,11 +36,6 @@ const users = {};
 
 io.on('connection', socket => {
 
-    msgModel.find({}, (e, docs) => {
-        if(e) throw e
-        socket.emit('load-msg',docs)
-    }).limit(10)
-
     socket.on('new-user-joined', name => {
         users[socket.id] = name;
         socket.broadcast.emit('user-joined', name)
@@ -61,4 +56,28 @@ io.on('connection', socket => {
 
 app.get('/client.js', (req,res)=> {
     res.sendFile((path.join(__dirname,'client.js')))
+})
+
+const oldMsgs = []
+
+app.get('/oldMessages.js', (req,res) => {
+    res.sendFile((path.join(__dirname,'oldMessages.js')))
+})
+
+app.get('/fetchMsg', (req,res)=>{
+
+    msgModel.find({}, (e, docs) => {
+        if(e) {
+            throw e
+        }
+        for (var i=0; i<docs.length; i++){
+            oldMsgs.push(docs[i])
+        }
+    }).select({userID:0, _id:0,__v:0})
+
+    res.send(JSON.stringify(oldMsgs))
+})
+
+app.get('/oldMessages', (req,res)=>{
+    res.sendFile((path.join(__dirname,'oldMsg.html')))
 })

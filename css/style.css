@@ -65,3 +65,15 @@ h1{
     cursor: pointer;
     height: 26px;
 }
+
+.hyperlinks{
+    text-align: center;
+    padding: 10px;
+    margin: auto;
+}
+
+.data{
+    text-align: center;
+    margin: auto;
+    padding: 3px;
+}
